@@ -1,6 +1,7 @@
 import re 
-txt = "sdfSdsfd"
-x = re.findall('[A-Z][a-z]+',txt)
+file=open("row.txt","r",encoding="utf8")
+txt = file.read()
+x = re.findall('[А-Я][а-я]+',txt)
 print (x)
 if (x):
     print("Match")
