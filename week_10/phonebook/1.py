@@ -1,37 +1,74 @@
-# Design tables for PhoneBook.
-
 import psycopg2
-
-# connection establishment
+import csv
+# Connect to the database by creating a connection object
 conn = psycopg2.connect(
-	database="phone",
-	user='phone_user',
-	password='Esko28:)',
-	host='localhost',
-	port= '5432'
-)
+    host='localhost', 
+    dbname='phone', 
+    user='postgres', 
+    password='123456'
+    )
 
-conn.autocommit = True
-# Creating a cursor object
-cursor = conn.cursor()
+# Create a cursor to work with the database
+cur = conn.cursor()
 
-# ------------1 ----------query to create a database
-#sql = ''' CREATE database Phone ''';
+# # Delete table
+cur.execute('DROP TABLE phones_data;')
 
-# ----------2 --------create user
-#sql = ''' CREATE ROLE phone_user WITH PASSWORD 'Esko28:)' LOGIN''';
+conn.commit()
 
-# ----------3 -------create table
+#1
+# Create a new table
+cur.execute("""CREATE TABLE phones_data (
+            name VARCHAR(255),
+            phone_number VARCHAR(20)
+);
+""")
 
-sql = '''CREATE TABLE PhoneBook(
-   first_name VARCHAR(255) NOT NULL,
-   last_name VARCHAR(255),
-   phone_num INT
-)'''
+conn.commit()
 
-# executing above query
-cursor.execute(sql)
-print("Database has been created successfully !!")
+#2
+#upload data from csv file
+filename = r'people.csv'
 
-# Closing the connection
-conn.close()
+with open(filename, "r") as csvfile:
+    csvreader = csv.reader(csvfile, delimiter=',')
+    for row in csvreader:
+        name, phone_number = row
+        
+        # Create new students
+        cur.execute(f"""INSERT INTO phones_data (name, phone_number) VALUES 
+                    ('{name}', '{phone_number}');
+        """)
+
+        conn.commit()
+#entering user name, phone from console
+kboard_name = str(input("Name: "))
+num = str(input("Num: "))
+
+postgres_insert_query = """ INSERT INTO  phones_data (name, phone_number) VALUES (%s,%s)"""
+record_to_insert = (kboard_name, num)
+cur.execute(postgres_insert_query, record_to_insert)
+
+conn.commit()
+
+#3 Implement updating data in the table (change user first name or phone)
+
+cur.execute("""UPDATE phones_data
+            SET name = '(changed)'
+            WHERE phone_number = '+770200000';
+""")
+
+conn.commit()
+
+#4 Querying data from the tables (with different filters)
+
+cur.execute("SELECT * FROM phones_data WHERE name = 'salta'")
+print(cur.fetchall())
+
+#5 Implement deleting data from tables by username of phone
+
+cur.execute("""DELETE FROM phones_data
+            WHERE name = 'samal';
+""")
+
+conn.commit()
