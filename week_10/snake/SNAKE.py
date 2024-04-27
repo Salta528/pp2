@@ -7,19 +7,21 @@ import datetime
 import psycopg2 as ps
 
 sql = '''
-    INSERT INTO snake VALUES (DEFAULT,%s,%s) ;
+    INSERT INTO Snakedata (user_login, last_score) VALUES (%s, %s);
 '''
 
 upd_sql = '''
-UPDATE snake
-SET score = %s
-WHERE name = %s;
+UPDATE Snakedata
+SET last_score = %s
+WHERE user_login = %s;
 '''
+
 print_sql = '''
-SELECT name, score FROM snake
-GROUP BY name, score
-ORDER BY score DESC
+SELECT user_login, last_score FROM Snakedata
+GROUP BY user_login, last_score
+ORDER BY last_score DESC;
 '''
+
 
 name = input()
 
@@ -183,7 +185,7 @@ def start_the_game():
 
 total = 0
 
-menu = pygame_menu.Menu('snake', 400, 300,
+menu = pygame_menu.Menu('Snakedata', 400, 300,
                        theme=pygame_menu.themes.THEME_GREEN.set_background_color_opacity(1))
 
 menu.add.text_input('Name :', default= name)
