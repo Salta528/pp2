@@ -1,10 +1,10 @@
 import psycopg2
 conn = psycopg2.connect(
-	database="snake",
-	user='snake_user',
-	password='Esko28:)',
 	host='localhost',
-	port= '5432'
+   database="snake",
+	user='postgres',
+	password='123456',
+   port = '5432'
 )
 
 conn.autocommit = True
@@ -24,5 +24,5 @@ sql = '''CREATE TABLE Snakedata(
 
 
 cursor.execute(sql)
-print("Database has been created successfully !!");
+print("Database has been created successfully !!")
 conn.close()
